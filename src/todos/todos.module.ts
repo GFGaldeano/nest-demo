@@ -2,6 +2,10 @@ import { Module } from '@nestjs/common';
 import { TodosService } from './todos.service';
 import { TodosController } from './todos.controller';
 import { TodosRepository } from './todos.repository';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Todo } from './todos.entity';
+import { File } from './files.entity';
+import { FilesService } from './files.service';
 
 //sin value
 // @Module({
@@ -12,7 +16,8 @@ import { TodosRepository } from './todos.repository';
 const ACCESS = 'ESTA ES MI CLAVE SECRETA'
 
 @Module({
-    providers: [TodosService, TodosRepository,{
+    imports: [TypeOrmModule.forFeature([Todo, File])],
+    providers: [TodosService, FilesService, TodosRepository,{
         provide: 'ACCESS_TOKEN',
         useValue: ACCESS
     }],

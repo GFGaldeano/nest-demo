@@ -1,31 +1,40 @@
-import { Injectable, Inject } from "@nestjs/common";
-import { UsersRepository } from "./users.repository";
-import { User } from "./user.interface";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './users.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-
-    constructor(private usersRepository: UsersRepository,
-         @Inject('API_USERS') private apiUsers: User[],
-    ) {
-
-    }
-   // getUsers() {
-     //   return this.usersRepository.getUsers();
-     async getUsers() {
-       const dbUsers=  await this.usersRepository.getUsers();
-       const users = [...dbUsers, ...this.apiUsers];
-       return users;
-    }
-    getUserById(id: number) {
-        return this.usersRepository.getById(id);
+  constructor(
+    @InjectRepository(User)private usersRepository: Repository<User>,
+  ) { }
+  
+    create(arg0: { password: string; id: string; name: string; email: string; createdAt: string; }) {
+        throw new Error('Method not implemented.');
     }
 
-    getUserByName(name: string) {
-        return this.usersRepository.getByName(name);
-    }
+  getUserByName(name: string) {
+    return this.usersRepository.find({where : {name}});
+  }
 
-    createUser(user: Omit<User, 'id'>): Promise<User> {
-        return this.usersRepository.createUser(user);
-    }
+
+
+  
+  
+  getUsers() {
+    return this.usersRepository.find();
+  }
+
+  saveUser(user: Omit<User, 'id'>) {
+    return this.usersRepository.save(user);
+  }
+
+  
+  getUserById(id: string) {
+    return this.usersRepository.findOne({where : {id}});
+}
+
+ getUserByEmail(email: string) {
+  return this.usersRepository.findOne({where : {email}});
+}
 }
